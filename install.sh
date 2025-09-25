@@ -57,6 +57,7 @@ check_dependencies() {
 
 # 偵測 Shell
 detect_shell() {
+    # 優先檢查當前 Shell 環境
     if [ -n "$ZSH_VERSION" ]; then
         SHELL_TYPE="zsh"
         RC_FILE="$HOME/.zshrc"
@@ -64,20 +65,27 @@ detect_shell() {
         SHELL_TYPE="bash"
         RC_FILE="$HOME/.bashrc"
     else
-        # 嘗試從 $SHELL 環境變數判斷
+        # 從 $SHELL 環境變數判斷
         case "$SHELL" in
             */zsh)
                 SHELL_TYPE="zsh"
                 RC_FILE="$HOME/.zshrc"
                 ;;
             */bash)
-                SHELL_TYPE="bash"
+                SHELL_TYPE="bash" 
                 RC_FILE="$HOME/.bashrc"
                 ;;
             *)
-                warn "無法偵測 Shell 類型，預設使用 bash"
-                SHELL_TYPE="bash"
-                RC_FILE="$HOME/.bashrc"
+                # 檢查哪個設定檔存在或更常用
+                if [ -f "$HOME/.zshrc" ] && command -v zsh >/dev/null 2>&1; then
+                    SHELL_TYPE="zsh"
+                    RC_FILE="$HOME/.zshrc"
+                    warn "無法確定 Shell 類型，但偵測到 zsh，使用 .zshrc"
+                else
+                    SHELL_TYPE="bash"
+                    RC_FILE="$HOME/.bashrc"
+                    warn "無法確定 Shell 類型，預設使用 bash"
+                fi
                 ;;
         esac
     fi
