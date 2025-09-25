@@ -93,8 +93,8 @@ download_script() {
     # 創建目錄
     mkdir -p "$HOME/.local/bin"
     
-    # 下載腳本 (這裡你需要替換成你的實際下載 URL)
-    SCRIPT_URL="https://raw.githubusercontent.com/your-username/auto-git-tag/main/auto-git-tag.js"
+    # 下載腳本 
+    SCRIPT_URL="https://raw.githubusercontent.com/tsukimi0116/auto-git-tag/main/auto-git-tag.js"
     SCRIPT_PATH="$HOME/.local/bin/auto-git-tag.js"
     
     # 如果是本地安裝，從當前目錄複製
@@ -208,7 +208,5 @@ main() {
     show_usage
 }
 
-# 如果腳本被直接執行
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    main "$@"
-fi
+# 執行主程式
+main "$@"
