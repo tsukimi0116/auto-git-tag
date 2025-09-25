@@ -1,0 +1,43 @@
+{
+  "name": "auto-git-tag",
+  "version": "1.0.0",
+  "description": "自動化 Git Tag 創建工具 - 自動讀取版本、提取票號、計算 QA 版本並推送 tag",
+  "main": "auto-git-tag.js",
+  "bin": {
+    "auto-git-tag": "./auto-git-tag.js",
+    "gtag": "./auto-git-tag.js"
+  },
+  "scripts": {
+    "install-global": "npm install -g .",
+    "uninstall-global": "npm uninstall -g auto-git-tag",
+    "test": "node auto-git-tag.js --help"
+  },
+  "keywords": [
+    "git",
+    "tag",
+    "automation",
+    "version",
+    "qa",
+    "deployment",
+    "workflow"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/auto-git-tag.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/auto-git-tag/issues"
+  },
+  "homepage": "https://github.com/your-username/auto-git-tag#readme",
+  "preferGlobal": true,
+  "files": [
+    "auto-git-tag.js",
+    "install.sh",
+    "README.md"
+  ]
+}
