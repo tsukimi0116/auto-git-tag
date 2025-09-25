@@ -132,24 +132,49 @@ setup_alias() {
     
     ALIAS_LINE="alias gtag='node ~/.local/bin/auto-git-tag.js'"
     
-    # 檢查別名是否已存在
-    if grep -q "alias gtag=" "$RC_FILE" 2>/dev/null; then
-        warn "別名 'gtag' 已存在，跳過設定"
-        return
+    # 同時設定 bash 和 zsh，確保覆蓋率
+    local files_updated=0
+    
+    # 設定 zsh
+    if [ -f "$HOME/.zshrc" ] || command -v zsh >/dev/null 2>&1; then
+        if ! grep -q "alias gtag=" "$HOME/.zshrc" 2>/dev/null; then
+            echo "" >> "$HOME/.zshrc"
+            echo "# Auto Git Tag alias" >> "$HOME/.zshrc"
+            echo "$ALIAS_LINE" >> "$HOME/.zshrc"
+            info "已設定 zsh 別名 (~/.zshrc)"
+            files_updated=$((files_updated + 1))
+        else
+            warn "zsh 別名已存在，跳過"
+        fi
     fi
     
-    # 備份原始設定檔
-    if [ -f "$RC_FILE" ]; then
-        cp "$RC_FILE" "${RC_FILE}.backup.$(date +%Y%m%d_%H%M%S)"
-        info "已備份原始設定檔: ${RC_FILE}.backup.$(date +%Y%m%d_%H%M%S)"
+    # 設定 bash
+    if [ -f "$HOME/.bashrc" ] || command -v bash >/dev/null 2>&1; then
+        if ! grep -q "alias gtag=" "$HOME/.bashrc" 2>/dev/null; then
+            echo "" >> "$HOME/.bashrc"
+            echo "# Auto Git Tag alias" >> "$HOME/.bashrc" 
+            echo "$ALIAS_LINE" >> "$HOME/.bashrc"
+            info "已設定 bash 別名 (~/.bashrc)"
+            files_updated=$((files_updated + 1))
+        else
+            warn "bash 別名已存在，跳過"
+        fi
     fi
     
-    # 加入別名
-    echo "" >> "$RC_FILE"
-    echo "# Auto Git Tag alias" >> "$RC_FILE"
-    echo "$ALIAS_LINE" >> "$RC_FILE"
+    # 也嘗試設定 .profile 作為備用
+    if ! grep -q "alias gtag=" "$HOME/.profile" 2>/dev/null; then
+        echo "" >> "$HOME/.profile"
+        echo "# Auto Git Tag alias" >> "$HOME/.profile"
+        echo "$ALIAS_LINE" >> "$HOME/.profile"
+        info "已設定通用別名 (~/.profile)"
+        files_updated=$((files_updated + 1))
+    fi
     
-    log "別名設定完成"
+    if [ $files_updated -gt 0 ]; then
+        log "別名設定完成（更新了 $files_updated 個檔案）"
+    else
+        warn "所有設定檔中別名都已存在"
+    fi
 }
 
 # 驗證安裝
@@ -179,7 +204,12 @@ show_usage() {
     echo ""
     echo -e "${YELLOW}📋 使用方法：${NC}"
     echo "   1. 重新載入 Shell 設定："
-    echo -e "      ${BLUE}source $RC_FILE${NC}"
+    echo -e "      ${BLUE}# Zsh 用戶：${NC}"
+    echo -e "      ${BLUE}source ~/.zshrc${NC}"
+    echo -e "      ${BLUE}# Bash 用戶：${NC}" 
+    echo -e "      ${BLUE}source ~/.bashrc${NC}"
+    echo -e "      ${BLUE}# 或者：${NC}"
+    echo -e "      ${BLUE}source ~/.profile${NC}"
     echo ""
     echo "   2. 或者重新開啟終端機"
     echo ""
@@ -206,8 +236,8 @@ main() {
     echo -e "${BLUE}開始安裝 Auto Git Tag 工具...${NC}"
     echo ""
     
+    
     check_dependencies
-    detect_shell
     download_script
     setup_alias
     verify_installation
